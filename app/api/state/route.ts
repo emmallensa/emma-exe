@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentEmail } from "@/lib/session";
 import { cachedAccess } from "@/lib/access";
+import { isAdmin } from "@/lib/session";
 import { loadUser, usados } from "@/lib/member";
 import { LIMITES, PERFILES } from "@/lib/config";
 
@@ -16,7 +17,7 @@ export async function GET() {
     chat: u.chat.slice(1),
     diagnostico: d ? { ...d, titulo: PERFILES[d.perfil].titulo, video: PERFILES[d.perfil].video } : null,
     cerrado: !!u.cerrado,
-    puedeRehacer: u.diagnosticos.length > 0 && u.diagnosticos.length < LIMITES.diagnosticos,
+    puedeRehacer: u.diagnosticos.length > 0 && (u.diagnosticos.length < LIMITES.diagnosticos || isAdmin(email)),
     quedan: Math.max(0, LIMITES.mensajesPorDiagnostico - usados(u)),
   });
 }

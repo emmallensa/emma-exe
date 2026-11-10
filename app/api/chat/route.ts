@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentEmail } from "@/lib/session";
 import { cachedAccess } from "@/lib/access";
+import { isAdmin } from "@/lib/session";
 import { loadUser, usados } from "@/lib/member";
 import { saveUser, underLimit, type Diagnostico } from "@/lib/store";
 import { FIXED, FIRST_USER, variable, diagnosticoTool, opening } from "@/lib/prompt";
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
   // Rehacer el diagnóstico (una vez).
   if (body.rehacer) {
     if (!u.cerrado) return NextResponse.json({ error: "Primero termina tu diagnóstico." }, { status: 403 });
-    if (u.diagnosticos.length >= LIMITES.diagnosticos) {
+    if (u.diagnosticos.length >= LIMITES.diagnosticos && !isAdmin(email)) {
       return NextResponse.json({ error: "Ya has rehecho tu diagnóstico. Este es el bueno." }, { status: 403 });
     }
     u.cerrado = false;
@@ -114,7 +115,7 @@ export async function POST(req: Request) {
     reply,
     quedan: quedan - 1,
     diagnostico: d ? { ...d, titulo: PERFILES[d.perfil].titulo, video: PERFILES[d.perfil].video } : null,
-    puedeRehacer: u.diagnosticos.length < LIMITES.diagnosticos,
+    puedeRehacer: u.diagnosticos.length < LIMITES.diagnosticos || isAdmin(email),
   });
 }
 

@@ -14,11 +14,13 @@ export default function LoginForm({ motivo }: { motivo?: string }) {
   const [email, setEmail] = useState("");
   const [estado, setEstado] = useState<"idle" | "enviando" | "enviado">("idle");
   const [error, setError] = useState(motivo ? MOTIVOS[motivo] ?? "" : "");
+  const [titulo, setTitulo] = useState(motivo ? "Ese enlace ya no funciona." : "");
   const [link, setLink] = useState<{ texto: string; url: string } | null>(null);
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setTitulo("");
     setLink(null);
     setEstado("enviando");
     try {
@@ -30,11 +32,13 @@ export default function LoginForm({ motivo }: { motivo?: string }) {
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
         if (j.link) setLink(j.link);
-        throw new Error(j.error || "Algo ha fallado. Prueba otra vez.");
+        setTitulo(j.titulo || "Emma.exe se ha colgado un momento.");
+        throw new Error(j.error || "Sí, como los ordenadores de antes. Prueba otra vez en un minuto.");
       }
       setEstado("enviado");
     } catch (err) {
-      setError((err as Error).message);
+      setTitulo((t) => t || "Emma.exe se ha colgado un momento.");
+      setError((err as Error).message === "Failed to fetch" ? "Parece que no hay conexión. Prueba otra vez." : (err as Error).message);
       setEstado("idle");
     }
   }
@@ -80,13 +84,14 @@ export default function LoginForm({ motivo }: { motivo?: string }) {
               </form>
             )}
             {error && (
-              <div className="alert bad" role="alert">
-                {error}
+              <div className="alert-box" role="alert">
+                <p className="alert-k">ERROR</p>
+                {titulo && <p className="alert-t">{titulo}</p>}
+                <p className="alert-p">{error}</p>
                 {link && (
-                  <>
-                    {" "}
-                    <a href={link.url}>{link.texto}</a>
-                  </>
+                  <a className="btn btn-sm" href={link.url}>
+                    {link.texto} &gt;
+                  </a>
                 )}
               </div>
             )}

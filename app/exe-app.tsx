@@ -41,14 +41,14 @@ export default function ExeApp() {
   useEffect(() => {
     fetch("/api/state")
       .then(async (r) => {
-        if (r.status === 401 || r.status === 403) {
-          await fetch("/api/logout", { method: "POST" });
+        if (r.status === 401) {
           location.href = "/";
           return;
         }
+        if (!r.ok) throw new Error();
         setSt(await r.json());
       })
-      .catch(() => setError("No he podido cargar Emma.exe. Recarga la página."));
+      .catch(() => setError("Emma.exe se ha colgado un momento. Recarga la página en un minuto."));
   }, []);
 
   useEffect(() => {

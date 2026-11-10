@@ -25,7 +25,7 @@ async function ordersFor(email: string): Promise<Order[]> {
   for (let page = 1; page <= 5; page++) {
     const r = await fetch(
       `${base}/wp-json/wc/v3/orders?search=${encodeURIComponent(email)}&per_page=100&page=${page}&status=any`,
-      { headers: { Authorization: `Basic ${auth}` }, cache: "no-store" },
+      { headers: { Authorization: `Basic ${auth}` }, cache: "no-store", signal: AbortSignal.timeout(9000) },
     );
     if (!r.ok) throw new Error(`WooCommerce ${r.status}`);
     const batch = (await r.json()) as Order[];

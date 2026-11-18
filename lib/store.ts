@@ -25,6 +25,7 @@ export type Diagnostico = {
   prompt: string;
   herramienta: string;
   recomendacion: { id: string; nombre: string; url: string; por_que: string };
+  miembro?: boolean; // ya era miembro de Diffuze Inside al hacer el diagnóstico
 };
 
 export type UserState = {

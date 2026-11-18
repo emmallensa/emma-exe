@@ -9,6 +9,8 @@ export type Access = {
   motivo?: "no-comprador" | "cerrado";
   nombre: string;
   compradas: number[];
+  /** Ya es miembro de Diffuze Inside (trimestral o anual en WooCommerce): no se le recomienda la membresía. */
+  miembro?: boolean;
 };
 
 /** conCompras: también saca los productos comprados (para no recomendarlos). En el login no hace falta. */
@@ -22,7 +24,8 @@ export async function checkAccess(email: string, conCompras = false): Promise<Ac
   // WooCommerce es lento: solo se consulta si Kit no da acceso, o si hacen falta las compras.
   const woo = porKit && !conCompras ? null : await infoWoo(email);
   const compradas = woo ? [...woo.productos] : [];
-  if (porKit || woo?.compraBF) return { ok: true, nombre, compradas };
+  const miembro = !!woo?.miembro || tags.some((t) => KIT_TAGS.miembroDI.includes(t.id));
+  if (porKit || woo?.compraBF) return { ok: true, nombre, compradas, miembro };
   return { ok: false, motivo: "no-comprador", nombre, compradas };
 }
 

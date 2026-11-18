@@ -1,4 +1,4 @@
-import { BF_HASTA, LANDING_BF, LISTA_ESPERA, type Perfil } from "./config";
+import { BF_HASTA, LANDING_BF, DIFFUZE_INSIDE, type Perfil } from "./config";
 
 // Lo único que Emma.exe puede recomendar. Nombre y enlace salen de aquí, nunca de la IA.
 // Sale de claude/catalogo-cursos-academia-diffuze.md (10 nov 2026) + piezas del Black Friday.
@@ -150,16 +150,21 @@ export const OPCIONES: Opcion[] = [
   // SIEMPRE
   {
     id: "diffuze_inside",
-    nombre: "Diffuze Inside (lista de espera)",
-    url: LISTA_ESPERA,
-    para: "La membresía: de todo un poco y algo nuevo cada semana. Ahora cerrada: solo lista de espera. Úsala si ningún curso encaja de verdad o si necesita varias cosas a la vez.",
+    nombre: "Diffuze Inside",
+    url: DIFFUZE_INSIDE,
+    para: "La membresía: una manera de trabajar en la que la IA te quita tareas de verdad, poco a poco y con todo montado. Algo nuevo cada semana y Emma resuelve las dudas dentro. Úsala si ningún curso encaja de verdad o si necesita varias cosas a la vez.",
     perfiles: ["ventas", "marketing", "mentalidad", "productividad"],
     productIds: [],
   },
 ];
 
-export function opcionesPara(compradas: Set<number>, now = new Date()) {
-  return OPCIONES.filter((o) => (!o.hasta || now <= o.hasta) && !o.productIds.some((id) => compradas.has(id)));
+export function opcionesPara(compradas: Set<number>, miembro = false, now = new Date()) {
+  return OPCIONES.filter(
+    (o) =>
+      (!o.hasta || now <= o.hasta) &&
+      !o.productIds.some((id) => compradas.has(id)) &&
+      !(miembro && o.id === "diffuze_inside"),
+  );
 }
 
 export const opcionPorId = (id: string) => OPCIONES.find((o) => o.id === id);

@@ -14,7 +14,7 @@ type State = {
   quedan: number;
 };
 
-const LISTA_ESPERA = "https://emmallensa.com/diffuze-inside/";
+const DIFFUZE_INSIDE = "https://emmallensa.com/diffuze-inside/";
 
 function vimeoEmbed(url: string) {
   if (!url) return "";
@@ -283,15 +283,15 @@ export default function ExeApp() {
               <p className="txt">{d.recomendacion.por_que}</p>
               <div className="actions">
                 <a className="btn btn-sm" href={d.recomendacion.url} target="_blank" rel="noopener">
-                  {d.recomendacion.id === "diffuze_inside" ? "Apuntarme a la lista de espera >" : "Ver el curso >"}
+                  {d.recomendacion.id === "diffuze_inside" ? "Ver Diffuze Inside >" : "Ver el curso >"}
                 </a>
               </div>
             </section>
 
-            {d.recomendacion.id !== "diffuze_inside" && (
+            {d.recomendacion.id !== "diffuze_inside" && !d.miembro && (
               <p className="cierre">
-                Esto es justo lo que trabajamos cada semana dentro de Diffuze Inside. Ahora está cerrada: si quieres
-                entrar en la próxima apertura, <a href={LISTA_ESPERA}>apúntate a la lista de espera</a>.
+                Esto es justo lo que trabajamos cada semana dentro de Diffuze Inside. Si quieres hacerlo conmigo,{" "}
+                <a href={DIFFUZE_INSIDE}>aquí la tienes</a>.
               </p>
             )}
 

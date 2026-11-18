@@ -44,6 +44,8 @@ export const KIT_TAGS = {
   compraBF: Number(process.env.TAG_COMPRA_BF || 25677681), // "compra black friday 2026" (la pone Make)
   accesoManual: Number(process.env.TAG_ACCESO || 25677938), // "acceso emmaexe" (dar acceso a mano)
   diagnosticoHecho: Number(process.env.TAG_HECHO || 25677746), // "emmaexe diagnostico hecho" (regla de Kit: sale de la secuencia 2965167)
+  // Miembros de Diffuze Inside (al darse de baja se les quita la etiqueta del plan): no se les recomienda la membresía.
+  miembroDI: [19230784, 19230783, 20360631, 25038999], // trimestral, anual, mensual, anual skool
 };
 
 // Fechas en hora de España (CET, UTC+1 en estas fechas).
@@ -59,6 +61,9 @@ export const LIMITES = {
 
 export const LANDING_BF = "https://emmallensa.com/finalizar-bf-2026/";
 export const CATALOGO = "https://emmallensa.com/academia-marketing-digital/";
-export const LISTA_ESPERA = "https://emmallensa.com/diffuze-inside/";
+export const DIFFUZE_INSIDE = "https://emmallensa.com/diffuze-inside/";
+// Productos de WooCommerce de la membresía (trimestral y anual).
+export const DI_TRIMESTRAL = 29903;
+export const DI_ANUAL = 29907;
 
 export const bfActivo = (now = new Date()) => now <= BF_HASTA;

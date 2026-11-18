@@ -1,4 +1,4 @@
-import { BF_DESDE, BF_HASTA } from "./config";
+import { BF_DESDE, BF_HASTA, DI_ANUAL, DI_TRIMESTRAL } from "./config";
 
 // API REST de WooCommerce con una clave de SOLO LECTURA (WooCommerce > Ajustes > Avanzado > API REST).
 // Si no hay clave, la app funciona igual (solo con Kit) y no descarta cursos comprados.
@@ -39,7 +39,18 @@ async function ordersFor(email: string): Promise<Order[]> {
 const esRenovacion = (o: Order) =>
   o.created_via === "subscription" || !!o.meta_data?.some((m) => m.key === "_subscription_renewal");
 
-export type InfoWoo = { compraBF: boolean; productos: Set<number> };
+export type InfoWoo = { compraBF: boolean; productos: Set<number>; miembro: boolean };
+
+const DIA = 86400000;
+/** Miembro de Diffuze Inside por WooCommerce: pedido pagado (alta o renovación) del trimestral en los últimos 100 días o del anual en los últimos 370. */
+function esMiembro(orders: Order[], now = Date.now()) {
+  return orders.some((o) => {
+    const edad = now - new Date(o.date_created_gmt + "Z").getTime();
+    return o.line_items.some(
+      (l) => (l.product_id === DI_TRIMESTRAL && edad <= 100 * DIA) || (l.product_id === DI_ANUAL && edad <= 370 * DIA),
+    );
+  });
+}
 
 export async function infoWoo(email: string): Promise<InfoWoo | null> {
   if (!wooConfigurado()) return null;
@@ -50,7 +61,7 @@ export async function infoWoo(email: string): Promise<InfoWoo | null> {
       const t = new Date(o.date_created_gmt + "Z").getTime();
       return t >= BF_DESDE.getTime() && t <= BF_HASTA.getTime() && !esRenovacion(o);
     });
-    return { compraBF, productos };
+    return { compraBF, productos, miembro: esMiembro(orders) };
   } catch (e) {
     console.error("WooCommerce", e);
     return null;

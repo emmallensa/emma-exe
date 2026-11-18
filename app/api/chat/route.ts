@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Por hoy ya está. Vuelve mañana y seguimos." }, { status: 429 });
   }
 
-  const opciones = opcionesPara(new Set(acc.compradas));
+  const opciones = opcionesPara(new Set(acc.compradas), !!acc.miembro);
   u.chat.push({ role: "user", content: message });
 
   let reply: string;
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     );
     if (tool?.name === "entregar_diagnostico") {
       const inp = tool.input as unknown as ToolInput;
-      const op = opcionPorId(inp.recomendacion_id) ?? opcionPorId("diffuze_inside")!;
+      const op = opciones.find((o) => o.id === inp.recomendacion_id) ?? opcionPorId(inp.recomendacion_id) ?? opciones[opciones.length - 1];
       const perfil: Perfil = inp.perfil in PERFILES ? inp.perfil : "ventas";
       diagnostico = {
         fecha: new Date().toISOString().slice(0, 10),
@@ -93,6 +93,7 @@ export async function POST(req: Request) {
         prompt: inp.prompt,
         herramienta: inp.herramienta,
         recomendacion: { id: op.id, nombre: op.nombre, url: op.url, por_que: inp.por_que },
+        miembro: !!acc.miembro,
       };
       u.diagnosticos = [...u.diagnosticos, diagnostico];
       u.cerrado = true;

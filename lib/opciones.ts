@@ -70,9 +70,9 @@ export const OPCIONES: Opcion[] = [
   },
   {
     id: "salir_primero",
-    nombre: "Cómo salir primero en ChatGPT",
+    nombre: "Curso GEO: cómo salir primero en ChatGPT y Claude",
     url: "https://emmallensa.com/taller-salir-primero-chatgpt/",
-    para: "Que ChatGPT y otras IAs recomienden su web. Para quien tiene web y quiere que la encuentren.",
+    para: "Que ChatGPT, Claude y otras IAs recomienden su web (renovado al 100 % en noviembre de 2026). Para quien tiene web y quiere que la encuentren o casi no le llega tráfico.",
     perfiles: ["marketing"],
     productIds: [27766],
   },

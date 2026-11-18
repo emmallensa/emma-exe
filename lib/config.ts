@@ -10,7 +10,7 @@ export const PERFILES: Record<
     titulo: "Te ven, pero no te compran",
     tagId: 25677934,
     // Pega aquí el enlace de Vimeo del vídeo (p. ej. https://vimeo.com/123456789). Vacío = "Vídeo en camino".
-    video: process.env.VIDEO_VENTAS || "",
+    video: process.env.VIDEO_VENTAS || "https://vimeo.com/1247965839",
     causa:
       "No le falta audiencia. O la oferta no se entiende, o no hay un motivo para comprar ahora (una fecha, un cierre, una razón para decidir).",
     accion:
@@ -19,14 +19,14 @@ export const PERFILES: Record<
   marketing: {
     titulo: "Lo que haces es bueno, pero lo ve muy poca gente",
     tagId: 25677935,
-    video: process.env.VIDEO_MARKETING || "",
+    video: process.env.VIDEO_MARKETING || "https://vimeo.com/1247965838",
     causa: "Publicar más no lo arregla. Le falta un sistema que convierta visitas en emails.",
     accion: "Pedir a la IA 10 ideas de regalo a partir de las 5 preguntas que más le hacen sus clientes.",
   },
   mentalidad: {
     titulo: "Por qué no consigues resultados",
     tagId: 25677936,
-    video: process.env.VIDEO_MENTALIDAD || "",
+    video: process.env.VIDEO_MENTALIDAD || "https://vimeo.com/1247965840",
     causa:
       "No es falta de técnica ni de herramientas. Es perfeccionismo y miedo a molestar, disfrazados de «aún no está listo».",
     accion: "Escribir hoy, con la IA, ese email que lleva semanas posponiendo, y dejarlo programado.",
@@ -34,7 +34,7 @@ export const PERFILES: Record<
   productividad: {
     titulo: "No llegas a todo",
     tagId: 25677937,
-    video: process.env.VIDEO_PRODUCTIVIDAD || "",
+    video: process.env.VIDEO_PRODUCTIVIDAD || "https://vimeo.com/1247966696",
     causa: "Hace a mano lo que podría hacer la IA y no tiene la semana planificada.",
     accion: "Apuntar todo lo que hace en un día y preguntar a la IA qué podría hacer ella.",
   },

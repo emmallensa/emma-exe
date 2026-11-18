@@ -16,6 +16,12 @@ export async function GET() {
     nombre: u.nombre,
     chat: u.chat.slice(1),
     diagnostico: d ? { ...d, titulo: PERFILES[d.perfil].titulo, video: PERFILES[d.perfil].video } : null,
+    // Los vídeos de los otros perfiles, para quien quiera verlos todos.
+    otros: d
+      ? (Object.keys(PERFILES) as (keyof typeof PERFILES)[])
+          .filter((p) => p !== d.perfil && PERFILES[p].video)
+          .map((p) => ({ perfil: p, titulo: PERFILES[p].titulo, video: PERFILES[p].video }))
+      : [],
     cerrado: !!u.cerrado,
     puedeRehacer: u.diagnosticos.length > 0 && (u.diagnosticos.length < LIMITES.diagnosticos || isAdmin(email)),
     quedan: Math.max(0, LIMITES.mensajesPorDiagnostico - usados(u)),

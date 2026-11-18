@@ -5,7 +5,9 @@ import type { Diagnostico } from "@/lib/store";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type Diag = Diagnostico & { titulo: string; video: string };
+type Otro = { perfil: string; titulo: string; video: string };
 type State = {
+  otros?: Otro[];
   nombre: string;
   chat: Msg[];
   diagnostico: Diag | null;
@@ -34,6 +36,7 @@ export default function ExeApp() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [otro, setOtro] = useState<string | null>(null);
   const [copiado, setCopiado] = useState(false);
   const msgsRef = useRef<HTMLDivElement>(null);
   const diagRef = useRef<HTMLDivElement>(null);
@@ -274,6 +277,39 @@ export default function ExeApp() {
                 )}
               </div>
             </section>
+
+            {!!st.otros?.length && (
+              <section className="panel no-print">
+                <h3 className="h-sec">¿Quieres cotillear los otros perfiles?</h3>
+                <p className="txt">
+                  Grabé un vídeo para cada perfil. El tuyo es el de arriba, pero si quieres verlos todos, aquí los tienes.
+                </p>
+                <div className="actions">
+                  {st.otros.map((o) => (
+                    <button
+                      key={o.perfil}
+                      className="btn btn-sm"
+                      aria-pressed={otro === o.perfil}
+                      onClick={() => setOtro(otro === o.perfil ? null : o.perfil)}
+                    >
+                      {o.perfil.toUpperCase()}: «{o.titulo}» {otro === o.perfil ? "▲" : "▼"}
+                    </button>
+                  ))}
+                </div>
+                {st.otros
+                  .filter((o) => o.perfil === otro)
+                  .map((o) => (
+                    <div className="video" key={o.perfil} style={{ marginTop: 18 }}>
+                      <iframe
+                        src={vimeoEmbed(o.video)}
+                        title={`Vídeo de Emma: ${o.titulo}`}
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ))}
+              </section>
+            )}
 
             <section className="panel white">
               <h3 className="h-sec">Lo siguiente que te recomiendo</h3>

@@ -121,15 +121,6 @@ export const OPCIONES: Opcion[] = [
     hasta: BF_HASTA,
   },
   {
-    id: "bf_seo",
-    nombre: "Proyecto SEO con Claude y ChatGPT",
-    url: bf(""),
-    para: "Hacer el SEO de su web con la IA. Para quien tiene web y casi no le llega tráfico.",
-    perfiles: ["marketing"],
-    productIds: [31840],
-    hasta: BF_HASTA,
-  },
-  {
     id: "bf_meta_ads",
     nombre: "Gestiona Meta Ads con la IA",
     url: bf(""),

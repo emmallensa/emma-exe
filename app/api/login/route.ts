@@ -67,7 +67,9 @@ async function enviar(req: Request, email: string) {
     );
   }
 
-  const token = await makeToken(email, "login", "30m");
+  // El enlace va al email que ha escrito (en Gmail es el mismo buzón), pero la sesión queda con el de Kit,
+  // para que las etiquetas del diagnóstico caigan en su ficha de siempre.
+  const token = await makeToken(acc.email, "login", "30m");
   const origin = process.env.APP_URL || new URL(req.url).origin;
   await sendLoginEmail(email, `${origin}/entrar?t=${encodeURIComponent(token)}`);
   return NextResponse.json({ ok: true });

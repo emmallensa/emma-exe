@@ -36,6 +36,24 @@ export async function subscriberTags(id: number): Promise<KitTag[]> {
   return out;
 }
 
+/** Todos los suscriptores con una etiqueta (para buscar variantes de un email de Gmail). */
+export async function subscribersForTag(tagId: number): Promise<KitSub[]> {
+  const out: KitSub[] = [];
+  let after = "";
+  for (let i = 0; i < 20; i++) {
+    const r = await fetch(`${BASE}/tags/${tagId}/subscribers?per_page=1000${after ? `&after=${after}` : ""}`, {
+      headers: headers(),
+      cache: "no-store",
+    });
+    if (!r.ok) throw new Error(`Kit ${r.status}`);
+    const j = await r.json();
+    out.push(...(j.subscribers ?? []).map((x: KitSub) => ({ id: x.id, first_name: x.first_name, email_address: x.email_address })));
+    if (!j.pagination?.has_next_page) break;
+    after = j.pagination.end_cursor;
+  }
+  return out;
+}
+
 /** Tags a subscriber by email (creates the subscriber if needed). Never throws. */
 export async function tagByEmail(tagId: number, email: string) {
   try {

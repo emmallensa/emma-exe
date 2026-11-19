@@ -1,4 +1,5 @@
 import { BF_DESDE, BF_HASTA, DI_ANUAL, DI_TRIMESTRAL } from "./config";
+import { mismoEmail } from "./email";
 
 // API REST de WooCommerce con una clave de SOLO LECTURA (WooCommerce > Ajustes > Avanzado > API REST).
 // Si no hay clave, la app funciona igual (solo con Kit) y no descarta cursos comprados.
@@ -33,7 +34,7 @@ async function ordersFor(email: string): Promise<Order[]> {
     if (batch.length < 100) break;
   }
   // "search" busca en varios campos: nos quedamos solo con los de ese email de facturación.
-  return out.filter((o) => (o.billing?.email || "").trim().toLowerCase() === email);
+  return out.filter((o) => mismoEmail(o.billing?.email || "", email));
 }
 
 const esRenovacion = (o: Order) =>
@@ -77,9 +78,7 @@ export async function compraBFWoo(email: string): Promise<boolean | null> {
         signal: AbortSignal.timeout(8000),
       });
       if (!r.ok) throw new Error(`WooCommerce ${r.status}`);
-      const orders = ((await r.json()) as Order[]).filter(
-        (o) => (o.billing?.email || "").trim().toLowerCase() === email,
-      );
+      const orders = ((await r.json()) as Order[]).filter((o) => mismoEmail(o.billing?.email || "", email));
       return orders.some((o) => PAGADO.includes(o.status) && !esRenovacion(o));
     } catch (e) {
       console.error("WooCommerce BF", intento + 1, e);

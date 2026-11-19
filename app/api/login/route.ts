@@ -44,6 +44,15 @@ async function enviar(req: Request, email: string) {
         { status: 403 },
       );
     }
+    if (acc.motivo === "sin-comprobar") {
+      return NextResponse.json(
+        {
+          titulo: "No he podido comprobar tu compra.",
+          error: "La tienda está tardando en contestar. Prueba otra vez en un par de minutos.",
+        },
+        { status: 503 },
+      );
+    }
     const bf = bfActivo();
     return NextResponse.json(
       {

@@ -52,6 +52,42 @@ function esMiembro(orders: Order[], now = Date.now()) {
   });
 }
 
+/**
+ * Solo para dar acceso: ¿tiene este email un pedido pagado del Black Friday?
+ * Pide a la tienda solo los pedidos de esos 5 días (no todo el historial), así que va mucho más rápido.
+ * Devuelve null si la tienda no contesta: así se distingue «no ha comprado» de «no lo he podido comprobar».
+ */
+export async function compraBFWoo(email: string): Promise<boolean | null> {
+  if (!wooConfigurado()) return null;
+  const base = process.env.WC_URL || "https://emmallensa.com";
+  const auth = Buffer.from(`${process.env.WC_CONSUMER_KEY}:${process.env.WC_CONSUMER_SECRET}`).toString("base64");
+  const params = new URLSearchParams({
+    search: email,
+    after: BF_DESDE.toISOString(),
+    before: BF_HASTA.toISOString(),
+    dates_are_gmt: "true",
+    per_page: "100",
+    status: "any",
+  });
+  for (let intento = 0; intento < 2; intento++) {
+    try {
+      const r = await fetch(`${base}/wp-json/wc/v3/orders?${params}`, {
+        headers: { Authorization: `Basic ${auth}` },
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!r.ok) throw new Error(`WooCommerce ${r.status}`);
+      const orders = ((await r.json()) as Order[]).filter(
+        (o) => (o.billing?.email || "").trim().toLowerCase() === email,
+      );
+      return orders.some((o) => PAGADO.includes(o.status) && !esRenovacion(o));
+    } catch (e) {
+      console.error("WooCommerce BF", intento + 1, e);
+    }
+  }
+  return null;
+}
+
 export async function infoWoo(email: string): Promise<InfoWoo | null> {
   if (!wooConfigurado()) return null;
   try {

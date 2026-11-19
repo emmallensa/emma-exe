@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentEmail, isAdmin } from "@/lib/session";
 import { redis } from "@/lib/store";
+import { compraBFWoo } from "@/lib/woo";
 
 // Comprobación rápida de las conexiones (solo para Emma).
 export async function GET() {
@@ -27,6 +28,14 @@ export async function GET() {
     out.woocommerce = r.ok ? "ok" : `error ${r.status}`;
   } catch (e) {
     out.woocommerce = `error ${(e as Error).message}`;
+  }
+  // Lo mismo que hace el login cuando alguien no tiene la etiqueta: buscar un email en los pedidos del BF. Con el tiempo que tarda.
+  try {
+    const t0 = Date.now();
+    const r = await compraBFWoo(email);
+    out.woocommerce_busqueda_bf = r === null ? "no contesta" : `ok (${Date.now() - t0} ms)`;
+  } catch (e) {
+    out.woocommerce_busqueda_bf = `error ${(e as Error).message}`;
   }
   try {
     await redis().set("salud", Date.now(), { ex: 60 });
